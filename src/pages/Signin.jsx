@@ -3,6 +3,8 @@ import { useNavigate,Link} from 'react-router'
 
 const Signin = () => {
   const navigate=useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
   const gotologin=async () => {
     navigate("/login")
   }
