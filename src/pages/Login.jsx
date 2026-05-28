@@ -1,89 +1,289 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from 'react';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import axios from 'axios';
+
+import {
+  Link,
+  useNavigate
+} from 'react-router-dom';
+
+import {
+  signInWithPopup
+} from "firebase/auth";
+
+import {
+  auth,
+  provider
+} from "../firebase";
 
 const Login = () => {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  // NORMAL LOGIN
   const login = async () => {
 
     try {
 
       const response = await axios.post(
-        `${BASE_URL}/login`,
+        "http://localhost:5000/login",
         {
           email,
           password
         }
       );
 
-      alert(response.data.message);
+      console.log(response.data);
 
-      // store token
+      // STORE TOKEN
       localStorage.setItem(
         "token",
         response.data.token
       );
 
-      console.log(localStorage.getItem("token"));
+      alert(response.data.message);
 
-      navigate("/Notebook");
+      // NAVIGATE
+      navigate("/notes");
 
     } catch (error) {
 
       console.log(error);
 
-      if (error.response) {
-        alert(error.response.data.message);
-      } else {
-        alert("Server Error");
-      }
+      alert("Login Failed");
+
+    }
+  };
+
+  // GOOGLE LOGIN
+  const googleLogin = async () => {
+
+    try {
+
+      const result =
+        await signInWithPopup(
+          auth,
+          provider
+        );
+
+      console.log(result.user);
+
+      alert("Google Login Success");
+
+      navigate("/notebook");
+
+    } catch (error) {
+
+      console.log(error);
 
     }
   };
 
   return (
-    <div>
 
-      <h1>Login Account</h1>
+    <div style={styles.container}>
 
-      <input
-        type="email"
-        placeholder="Enter your email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div style={styles.overlay}>
 
-      <br /><br />
+        <div style={styles.card}>
 
-      <input
-        type="password"
-        placeholder="Enter your password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+          <h1 style={styles.heading}>
+            Login Account
+          </h1>
 
-      <br /><br />
+          <input
+            type="email"
+            placeholder='Enter your email'
+            style={styles.input}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
 
-      <button onClick={login}>
-        Login
-      </button>
+          <input
+            type="password"
+            placeholder='Enter your password'
+            style={styles.input}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
 
-      <p>
-        Dont have account{" "}
+          <button
+            style={styles.loginButton}
+            onClick={login}
+          >
+            Login
+          </button>
 
-        <Link to="/signin">
-          Create Account
-        </Link>
+          <div style={styles.or}>
+            OR
+          </div>
 
-      </p>
+          <button
+            style={styles.googleButton}
+            onClick={googleLogin}
+          >
+            Continue with Google
+          </button>
+
+          <p style={styles.text}>
+
+            Don't have an account ?
+
+            <Link
+              to="/signin"
+              style={styles.link}
+            >
+              Sign in
+            </Link>
+
+          </p>
+
+        </div>
+
+      </div>
 
     </div>
   );
 };
 
 export default Login;
+
+const styles = {
+
+  container: {
+    height: "100vh",
+
+    backgroundImage:
+      "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=1600&auto=format&fit=crop')",
+
+    backgroundSize: "cover",
+
+    backgroundPosition: "center",
+  },
+
+  overlay: {
+    height: "100%",
+    width: "100%",
+
+    background: "rgba(0,0,0,0.5)",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+  },
+
+  card: {
+
+    width: "370px",
+
+    background: "rgba(255,255,255,0.12)",
+
+    backdropFilter: "blur(12px)",
+
+    padding: "35px",
+
+    borderRadius: "20px",
+
+    boxShadow:
+      "0px 8px 32px rgba(0,0,0,0.3)",
+
+    display: "flex",
+
+    flexDirection: "column",
+
+    gap: "18px",
+
+    border:
+      "1px solid rgba(255,255,255,0.2)",
+  },
+
+  heading: {
+    textAlign: "center",
+    color: "white",
+    fontSize: "34px",
+    fontWeight: "bold",
+  },
+
+  input: {
+    padding: "14px",
+
+    borderRadius: "10px",
+
+    border: "none",
+
+    fontSize: "16px",
+
+    outline: "none",
+
+    background:
+      "rgba(255,255,255,0.2)",
+
+    color: "white",
+  },
+
+  loginButton: {
+
+    padding: "14px",
+
+    border: "none",
+
+    borderRadius: "10px",
+
+    background:
+      "linear-gradient(to right,#141e30,#243b55)",
+
+    color: "white",
+
+    fontSize: "16px",
+
+    cursor: "pointer",
+
+    fontWeight: "bold",
+  },
+
+  googleButton: {
+
+    padding: "14px",
+
+    border: "none",
+
+    borderRadius: "10px",
+
+    background:
+      "linear-gradient(to right,#ff512f,#dd2476)",
+
+    color: "white",
+
+    fontSize: "16px",
+
+    cursor: "pointer",
+
+    fontWeight: "bold",
+  },
+
+  or: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "white",
+  },
+
+  text: {
+    textAlign: "center",
+    color: "white",
+  },
+
+  link: {
+    marginLeft: "5px",
+    color: "#fff",
+    textDecoration: "none",
+    fontWeight: "bold",
+  },
+};
