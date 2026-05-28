@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import axios from 'axios';
 
+import toast from "react-hot-toast";
+
 import {
   Link,
   useNavigate
@@ -18,6 +20,9 @@ import {
 
 const Login = () => {
 
+  const BASE_URL =
+    import.meta.env.VITE_BASE_URL;
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -30,7 +35,9 @@ const Login = () => {
     try {
 
       const response = await axios.post(
-        "http://localhost:5000/login",
+
+        `${BASE_URL}/login`,
+
         {
           email,
           password
@@ -45,16 +52,17 @@ const Login = () => {
         response.data.token
       );
 
-      alert(response.data.message);
+      toast.success(
+        response.data.message
+      );
 
-      // NAVIGATE
       navigate("/notes");
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Login Failed");
+      toast.error("Login Failed");
 
     }
   };
@@ -72,13 +80,17 @@ const Login = () => {
 
       console.log(result.user);
 
-      alert("Google Login Success");
+      toast.success(
+        "Google Login Success"
+      );
 
-      navigate("/notebook");
+      navigate("/notes");
 
     } catch (error) {
 
       console.log(error);
+
+      toast.error("Google Login Failed");
 
     }
   };

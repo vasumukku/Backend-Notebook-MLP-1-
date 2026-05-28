@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
 
+import toast from "react-hot-toast";
+
 import {
   useNavigate
 } from "react-router-dom";
 
 const Notebook = () => {
+
+  const BASE_URL =
+    import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
 
@@ -29,6 +34,8 @@ const Notebook = () => {
 
     localStorage.removeItem("token");
 
+    toast.success("Logout Success");
+
     navigate("/");
   };
 
@@ -38,7 +45,8 @@ const Notebook = () => {
     try {
 
       const response = await axios.get(
-        "http://localhost:5000/allNotes",
+
+        `${BASE_URL}/allNotes`,
 
         {
           headers: {
@@ -53,6 +61,8 @@ const Notebook = () => {
 
       console.log(error);
 
+      toast.error("Failed To Load Notes");
+
     }
   };
 
@@ -62,7 +72,8 @@ const Notebook = () => {
     try {
 
       await axios.post(
-        "http://localhost:5000/CreateNotebook",
+
+        `${BASE_URL}/CreateNotebook`,
 
         {
           heading,
@@ -76,7 +87,7 @@ const Notebook = () => {
         }
       );
 
-      alert("Note Created");
+      toast.success("Note Created");
 
       setHeading("");
 
@@ -90,6 +101,8 @@ const Notebook = () => {
 
       console.log(error);
 
+      toast.error("Create Failed");
+
     }
   };
 
@@ -99,7 +112,8 @@ const Notebook = () => {
     try {
 
       await axios.delete(
-        `http://localhost:5000/api/delete-note/${id}`,
+
+        `${BASE_URL}/api/delete-note/${id}`,
 
         {
           headers: {
@@ -108,13 +122,15 @@ const Notebook = () => {
         }
       );
 
-      alert("Note Deleted");
+      toast.success("Note Deleted");
 
       getnotes();
 
     } catch (error) {
 
       console.log(error);
+
+      toast.error("Delete Failed");
 
     }
   };
@@ -136,7 +152,7 @@ const Notebook = () => {
 
       await axios.put(
 
-        `http://localhost:5000/update/${editId}`,
+        `${BASE_URL}/update/${editId}`,
 
         {
           heading,
@@ -150,7 +166,7 @@ const Notebook = () => {
         }
       );
 
-      alert("Note Updated");
+      toast.success("Note Updated");
 
       setEditId(null);
 
@@ -159,6 +175,8 @@ const Notebook = () => {
     } catch (error) {
 
       console.log(error);
+
+      toast.error("Update Failed");
 
     }
   };

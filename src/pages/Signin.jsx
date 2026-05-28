@@ -2,9 +2,19 @@ import React, { useState } from 'react';
 
 import axios from 'axios';
 
-import { Link } from 'react-router-dom';
+import toast from "react-hot-toast";
+
+import {
+  Link,
+  useNavigate
+} from 'react-router-dom';
 
 const Signin = () => {
+
+  const BASE_URL =
+    import.meta.env.VITE_BASE_URL;
+
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
 
@@ -17,7 +27,9 @@ const Signin = () => {
     try {
 
       const response = await axios.post(
-        "http://localhost:5000/signin",
+
+        `${BASE_URL}/signin`,
+
         {
           name,
           email,
@@ -25,15 +37,19 @@ const Signin = () => {
         }
       );
 
-      console.log(response.data.userdata.name);
+      console.log(response.data);
 
-      alert(
-        `${response.data.userdata.name} account created successfully`
+      toast.success(
+        `${response.data.userdata.name} Account Created`
       );
+
+      navigate("/");
 
     } catch (error) {
 
       console.log(error);
+
+      toast.error("Signup Failed");
 
     }
   };
@@ -42,58 +58,62 @@ const Signin = () => {
 
     <div style={styles.container}>
 
-      <div style={styles.card}>
+      <div style={styles.overlay}>
 
-        <h1 style={styles.heading}>
-          Create Account
-        </h1>
+        <div style={styles.card}>
 
-        <input
-          type="text"
-          placeholder='Enter your name'
-          style={styles.input}
-          onChange={(e) => {
-            setName(e.target.value)
-          }}
-        />
+          <h1 style={styles.heading}>
+            Create Account
+          </h1>
 
-        <input
-          type="email"
-          placeholder='Enter your email'
-          style={styles.input}
-          onChange={(e) => {
-            setEmail(e.target.value)
-          }}
-        />
+          <input
+            type="text"
+            placeholder='Enter your name'
+            style={styles.input}
+            onChange={(e) => {
+              setName(e.target.value)
+            }}
+          />
 
-        <input
-          type='password'
-          placeholder='Enter your password'
-          style={styles.input}
-          onChange={(e) => {
-            setPassword(e.target.value)
-          }}
-        />
+          <input
+            type="email"
+            placeholder='Enter your email'
+            style={styles.input}
+            onChange={(e) => {
+              setEmail(e.target.value)
+            }}
+          />
 
-        <button
-          style={styles.button}
-          onClick={create}
-        >
-          Signin
-        </button>
+          <input
+            type='password'
+            placeholder='Enter your password'
+            style={styles.input}
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
+          />
 
-        <p style={styles.text}>
-
-          Already have an account ?
-
-          <Link
-            to="/"
-            style={styles.link}
+          <button
+            style={styles.button}
+            onClick={create}
           >
-            Login
-          </Link>
+            Sign Up
+          </button>
 
-        </p>
+          <p style={styles.text}>
+
+            Already have an account ?
+
+            <Link
+              to="/"
+              style={styles.link}
+            >
+              Login
+            </Link>
+
+          </p>
+
+        </div>
 
       </div>
 
@@ -106,19 +126,34 @@ export default Signin
 const styles = {
 
   container: {
+
     height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
 
     backgroundImage:
       "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1600&auto=format&fit=crop')",
 
     backgroundSize: "cover",
+
     backgroundPosition: "center",
   },
 
+  overlay: {
+
+    height: "100%",
+
+    width: "100%",
+
+    background: "rgba(0,0,0,0.55)",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+  },
+
   card: {
+
     width: "360px",
 
     background: "rgba(255,255,255,0.12)",
@@ -138,31 +173,45 @@ const styles = {
 
     gap: "18px",
 
-    border: "1px solid rgba(255,255,255,0.2)",
+    border:
+      "1px solid rgba(255,255,255,0.2)",
   },
 
   heading: {
+
     textAlign: "center",
+
     color: "white",
-    fontSize: "32px",
+
+    fontSize: "34px",
+
     fontWeight: "bold",
   },
 
   input: {
+
     padding: "14px",
+
     borderRadius: "10px",
+
     border: "none",
+
     fontSize: "16px",
+
     outline: "none",
 
-    background: "rgba(255,255,255,0.2)",
+    background:
+      "rgba(255,255,255,0.2)",
 
     color: "white",
   },
 
   button: {
+
     padding: "14px",
+
     border: "none",
+
     borderRadius: "10px",
 
     background:
@@ -178,14 +227,20 @@ const styles = {
   },
 
   text: {
+
     textAlign: "center",
+
     color: "white",
   },
 
   link: {
+
     marginLeft: "5px",
+
     color: "#fff",
+
     textDecoration: "none",
+
     fontWeight: "bold",
   },
 };
